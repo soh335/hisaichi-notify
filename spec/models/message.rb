@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require 'msgpack'
 
 describe Message do
   before(:each) do
@@ -28,5 +29,15 @@ describe Message do
 
   it "should key unique" do
     expect(@message.key).not_to equal(Message.new.key)
+  end
+
+  it "should new_from_key_and_msgpack" do
+    encoded = { :time => Time.now.to_i + 10, :text => "hoge" }.to_msgpack
+    message = Message.new_from_key_and_msgpack("fuga", encoded)
+
+    expect(message.text).to eq("hoge")
+    expect(message.time).to eq(10)
+    expect(message.key).to eq("fuga")
+    expect(message).tp be_valid
   end
 end
