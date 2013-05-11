@@ -7,6 +7,7 @@ class MessageController < ApplicationController
   def post
     @message = Message.new post_params
     if @message.valid?
+      @message.add_timer_with_redis
       redirect_to :action => 'index'
     else
       render :action => 'index'
