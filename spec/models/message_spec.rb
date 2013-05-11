@@ -40,4 +40,13 @@ describe Message do
     expect(message.key).to eq("fuga")
     expect(message).to be_valid
   end
+
+  it "should success save_to_redis" do
+    @message.time = 10
+    @message.text = "hoge"
+    key = @message.key
+    @message.save_to_redis
+    encoded = $redis.hget("timer", key)
+    expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 10, "text" => "hoge"})
+  end
 end

@@ -21,4 +21,9 @@ class Message
   def key
     @key ||= UUIDTools::UUID.random_create.to_s
   end
+
+  def save_to_redis
+    encoded = { :time => Time.now.to_i + time, :text => text }.to_msgpack
+    $redis.hset("timer", key, encoded)
+  end
 end

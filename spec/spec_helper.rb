@@ -4,6 +4,8 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
 
+require 'socket'
+
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
@@ -39,4 +41,42 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  # https://github.com/resque/resque/wiki/RSpec-and-Resque
+  REDIS_PID = "#{Rails.root}/tmp/pids/redis-test.pid"
+  REDIS_CACHE_PATH = "#{Rails.root}/tmp/cache/"
+
+
+  config.before(:all) do
+
+    # http://qiita.com/items/bf47e254d662af1294d8
+    s = TCPServer.open(0)
+    redis_port = s.addr[1]
+    s.close
+
+    redis_options = {
+      "daemonize"     => 'yes',
+      "pidfile"       => REDIS_PID,
+      "port"          => redis_port,
+      "timeout"       => 300,
+      "save 900"      => 1,
+      "save 300"      => 1,
+      "save 60"       => 10000,
+      "dbfilename"    => "dump.rdb",
+      "dir"           => REDIS_CACHE_PATH,
+      "loglevel"      => "debug",
+      "logfile"       => "stdout",
+      "databases"     => 16
+    }.map { |k, v| "#{k} #{v}" }.join("\n")
+
+    ENV["REDISTOGO_URL"] = "redis://localhost:#{redis_port}"
+    `echo '#{redis_options}' | redis-server -`
+  end
+
+  config.after(:all) do
+    %x{
+      cat #{REDIS_PID} | xargs kill -QUIT
+      rm -f #{REDIS_CACHE_PATH}dump.rdb
+    }
+  end
 end

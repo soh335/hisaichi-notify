@@ -46,6 +46,7 @@ end
 
 gem 'uuidtools'
 gem 'msgpack'
+gem 'redis'
 
 group :development, :test do
   gem 'rspec-rails'
