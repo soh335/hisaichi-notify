@@ -49,6 +49,7 @@ gem 'msgpack'
 gem 'redis'
 gem 'eventmachine'
 gem 'em-http-request'
+gem 'thin'
 
 group :test do
   gem 'rspec-rails'
