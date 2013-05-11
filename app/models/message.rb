@@ -40,7 +40,7 @@ class Message
   end
 
   def save_to_redis
-    encoded = { :time => Time.now.to_i + time, :text => text }.to_msgpack
+    encoded = { :time => Time.now.to_i + time.to_i, :text => text }.to_msgpack
     $redis.hset("timer", key, encoded)
   end
 end
