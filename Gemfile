@@ -45,6 +45,7 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'uuidtools'
+gem 'msgpack'
 
 group :development, :test do
   gem 'rspec-rails'
