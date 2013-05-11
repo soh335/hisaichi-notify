@@ -50,21 +50,61 @@ describe Message do
     expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 10, "text" => "hoge"})
   end
 
-  it "should add_timer_with_redis" do
-    WebMock.disable_net_connect!
-    EM.run do
+  context "stub request" do
 
+    before(:each) do
+      WebMock.reset!
+      WebMock.disable_net_connect!
       stub_request(:post, ENV["POST_URL"])
+    end
 
-      @message.time = 1
-      @message.text = "hoge"
-      key = @message.key
-      @message.add_timer_with_redis
-      encoded = $redis.hget("timer", key)
-      expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 1, "text" => "hoge" })
-      EM.add_timer(2) do
+    it "should add_timer_with_redis" do
+      EM.run do
+
+        @message.time = 1
+        @message.text = "hoge"
+        key = @message.key
+        @message.add_timer_with_redis
         encoded = $redis.hget("timer", key)
-        expect(encoded).to be_nil
+        expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 1, "text" => "hoge" })
+        EM.add_timer(2) do
+          encoded = $redis.hget("timer", key)
+          expect(encoded).to be_nil
+          EM.stop
+        end
+      end
+    end
+
+    it "should restore" do
+
+      EM.run do
+
+        @message.time = 1
+        @message.text = "dameleon"
+        key = @message.key
+        @message.add_timer_with_redis
+        encoded = $redis.hget("timer", key)
+        expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 1, "text" => "dameleon" })
+
+        @message2 = Message.new
+        @message2.time = 4
+        @message2.text = "hisaichi"
+        @message2.add_timer_with_redis
+
+        EM.stop
+      end
+      sleep 2
+
+      EM.run do
+        message2_hash = MessagePack.unpack($redis.hget("timer", @message2.key))
+
+        Message.restore
+
+        expect($redis.hget("timer", @message.key)).to be_nil
+
+        decoded = MessagePack.unpack($redis.hget("timer", @message2.key))
+        expect(decoded["time"]).to be_within(Time.now.to_i+1).of(Time.now.to_i+2)
+        expect(decoded["text"]).to eq("hisaichi")
         EM.stop
       end
     end

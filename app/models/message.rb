@@ -18,6 +18,21 @@ class Message
     self.new hash
   end
 
+  def self.restore
+    $redis.hgetall("timer").each_pair do |key, msgpack|
+      begin
+        message = Message.new_from_key_and_msgpack(key, msgpack)
+        unless message.valid?
+          $redis.hdel("timer", key)
+          next
+        end
+        message.add_timer
+      rescue => e
+        p e
+      end
+    end
+  end
+
   def key
     @key ||= UUIDTools::UUID.random_create.to_s
   end
