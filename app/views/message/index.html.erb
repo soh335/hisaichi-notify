@@ -1,0 +1,21 @@
+<%= form_for @message, url: "/post", html: { method: :post } do |f| %>
+
+  <% if @message.errors.any? %>
+    <ul>
+      <% @message.errors.full_messages.each do |m| %>
+        <li><%= m %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <p>
+    <%= f.label :text %>
+    <%= f.text_field :text %>
+  </p>
+  <p>
+    <%= f.label :time %>
+    <%= f.text_area :time %>
+  </p>
+
+  <%= f.submit 'post' %>
+<% end %>

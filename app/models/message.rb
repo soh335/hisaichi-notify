@@ -3,6 +3,7 @@ require 'msgpack'
 
 class Message
   include ActiveModel::Model
+  include ActiveModel::ForbiddenAttributesProtection
 
   attr_accessor :time, :text, :key
 
