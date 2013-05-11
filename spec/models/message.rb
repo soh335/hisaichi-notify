@@ -38,6 +38,6 @@ describe Message do
     expect(message.text).to eq("hoge")
     expect(message.time).to eq(10)
     expect(message.key).to eq("fuga")
-    expect(message).tp be_valid
+    expect(message).to be_valid
   end
 end
