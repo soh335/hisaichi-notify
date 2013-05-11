@@ -49,4 +49,24 @@ describe Message do
     encoded = $redis.hget("timer", key)
     expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 10, "text" => "hoge"})
   end
+
+  it "should add_timer_with_redis" do
+    WebMock.disable_net_connect!
+    EM.run do
+
+      stub_request(:post, ENV["POST_URL"])
+
+      @message.time = 1
+      @message.text = "hoge"
+      key = @message.key
+      @message.add_timer_with_redis
+      encoded = $redis.hget("timer", key)
+      expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 1, "text" => "hoge" })
+      EM.add_timer(2) do
+        encoded = $redis.hget("timer", key)
+        expect(encoded).to be_nil
+        EM.stop
+      end
+    end
+  end
 end

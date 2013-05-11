@@ -47,7 +47,10 @@ end
 gem 'uuidtools'
 gem 'msgpack'
 gem 'redis'
+gem 'eventmachine'
+gem 'em-http-request'
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'webmock'
 end

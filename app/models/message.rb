@@ -22,6 +22,23 @@ class Message
     @key ||= UUIDTools::UUID.random_create.to_s
   end
 
+  def add_timer_with_redis
+    save_to_redis
+    add_timer
+  end
+
+  def add_timer
+    EM.add_timer(time) do
+      http = EventMachine::HttpRequest.new(ENV["POST_URL"]).post :body => { :text => text }
+      http.callback {
+        $redis.hdel("timer", key)
+      }
+      http.errback {
+        $redis.hdel("timer", key)
+      }
+    end
+  end
+
   def save_to_redis
     encoded = { :time => Time.now.to_i + time, :text => text }.to_msgpack
     $redis.hset("timer", key, encoded)
