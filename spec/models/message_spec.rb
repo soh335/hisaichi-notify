@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-require 'msgpack'
 
 describe Message do
   before(:each) do

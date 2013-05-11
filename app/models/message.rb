@@ -1,6 +1,3 @@
-require 'uuidtools'
-require 'msgpack'
-
 class Message
   include ActiveModel::Model
   include ActiveModel::ForbiddenAttributesProtection
