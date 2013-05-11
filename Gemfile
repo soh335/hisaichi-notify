@@ -50,7 +50,7 @@ gem 'redis'
 gem 'eventmachine'
 gem 'em-http-request'
 
-group :development, :test do
+group :test do
   gem 'rspec-rails'
   gem 'webmock'
 end
