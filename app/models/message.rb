@@ -43,9 +43,11 @@ class Message
       http = EventMachine::HttpRequest.new(ENV["POST_URL"]).post :body => { :text => text }
       http.callback {
         $redis.hdel("timer", key)
+        Rails.logger.info "#{key} del in callback"
       }
       http.errback {
         $redis.hdel("timer", key)
+        Rails.logger.info "#{key} del in errback"
       }
     end
   end
