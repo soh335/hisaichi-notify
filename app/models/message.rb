@@ -24,7 +24,7 @@ class Message
         end
         message.add_timer
       rescue => e
-        p e
+        Rails.logger.info e
       end
     end
   end
