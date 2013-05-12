@@ -6,6 +6,9 @@ require 'rspec/autorun'
 require 'webmock/rspec'
 
 require 'socket'
+require 'tmpdir'
+require 'tempfile'
+require 'fileutils'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -44,11 +47,11 @@ RSpec.configure do |config|
   config.order = "random"
 
   # https://github.com/resque/resque/wiki/RSpec-and-Resque
-  REDIS_PID = "#{Rails.root}/tmp/pids/redis-test.pid"
-  REDIS_CACHE_PATH = "#{Rails.root}/tmp/cache/"
-
 
   config.before(:all) do
+
+    @redis_pid = Tempfile.new(["redis-test", ".pid"])
+    @redis_cache_dir = Dir.mktmpdir
 
     # http://qiita.com/items/bf47e254d662af1294d8
     s = TCPServer.open(0)
@@ -57,14 +60,14 @@ RSpec.configure do |config|
 
     redis_options = {
       "daemonize"     => 'yes',
-      "pidfile"       => REDIS_PID,
+      "pidfile"       => @redis_pid.path,
       "port"          => redis_port,
       "timeout"       => 300,
       "save 900"      => 1,
       "save 300"      => 1,
       "save 60"       => 10000,
       "dbfilename"    => "dump.rdb",
-      "dir"           => REDIS_CACHE_PATH,
+      "dir"           => @redis_cache_dir,
       "loglevel"      => "debug",
       "logfile"       => "stdout",
       "databases"     => 16
@@ -76,8 +79,9 @@ RSpec.configure do |config|
 
   config.after(:all) do
     %x{
-      cat #{REDIS_PID} | xargs kill -QUIT
-      rm -f #{REDIS_CACHE_PATH}dump.rdb
+      cat #{@redis_pid.path} | xargs kill -QUIT
     }
+    @redis_pid.unlink
+    FileUtils.remove_dir @redis_cache_dir, true
   end
 end
