@@ -8,6 +8,7 @@ class MessageController < ApplicationController
     @message = Message.new post_params
     if @message.valid?
       @message.add_timer_with_redis
+      flash[:success] = "success to post"
       redirect_to :action => 'index'
     else
       render :action => 'index'

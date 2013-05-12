@@ -1,3 +1,6 @@
+<% if success -%>
+  <p><%= success %></p>
+<% end %>
 <%= form_for @message, url: "/post", html: { method: :post } do |f| %>
 
   <% if @message.errors.any? %>
