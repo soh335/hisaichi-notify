@@ -50,6 +50,7 @@ gem 'redis'
 gem 'eventmachine'
 gem 'em-http-request'
 gem 'thin'
+gem 'newrelic_rpm'
 
 group :test do
   gem 'rspec-rails'
