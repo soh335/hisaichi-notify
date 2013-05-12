@@ -4,9 +4,8 @@ class Message
 
   attr_accessor :time, :text, :key
 
-  validates_presence_of :time
-  validates_numericality_of :time, :greater_than => 0
-  validates_presence_of :text
+  validates :time, presence: true, numericality: { :greater_than => 0 }
+  validates :text, presence: true
 
   def self.new_from_key_and_msgpack(key, msgpack)
     hash = MessagePack.unpack(msgpack)
