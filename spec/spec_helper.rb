@@ -70,7 +70,7 @@ RSpec.configure do |config|
       "databases"     => 16
     }.map { |k, v| "#{k} #{v}" }.join("\n")
 
-    ENV["REDISTOGO_URL"] = "redis://localhost:#{redis_port}"
+    $redis = Redis.new( :host => "localhost", :port => redis_port )
     `echo '#{redis_options}' | redis-server -`
   end
 
