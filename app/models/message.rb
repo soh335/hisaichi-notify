@@ -18,7 +18,7 @@ class Message
     self.all_messages.each do |message|
       begin
         unless message.valid?
-          $redis.hdel("timer", message.key)
+          self.delete message.key
           next
         end
         message.add_timer
@@ -34,6 +34,10 @@ class Message
     }.sort { |a, b| a.time <=> b.time }
   end
 
+  def self.delete(key)
+    $redis.hdel("timer", key)
+  end
+
   def key
     @key ||= UUIDTools::UUID.random_create.to_s
   end
@@ -47,11 +51,11 @@ class Message
     EM.add_timer(time) do
       http = EventMachine::HttpRequest.new(ENV["POST_URL"]).post :body => { :text => text }
       http.callback {
-        $redis.hdel("timer", key)
+        Message.delete key
         Rails.logger.info "#{key} del in callback"
       }
       http.errback {
-        $redis.hdel("timer", key)
+        Message.delete key
         Rails.logger.info "#{key} del in errback"
       }
     end
