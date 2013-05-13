@@ -15,11 +15,10 @@ class Message
   end
 
   def self.restore
-    $redis.hgetall("timer").each_pair do |key, msgpack|
+    self.all_messages.each do |message|
       begin
-        message = Message.new_from_key_and_msgpack(key, msgpack)
         unless message.valid?
-          $redis.hdel("timer", key)
+          $redis.hdel("timer", message.key)
           next
         end
         message.add_timer
@@ -27,6 +26,12 @@ class Message
         Rails.logger.info e
       end
     end
+  end
+
+  def self.all_messages
+    $redis.hgetall("timer").map { |key, msgpack|
+      Message.new_from_key_and_msgpack(key, msgpack)
+    }.sort { |a, b| a.time <=> b.time }
   end
 
   def key

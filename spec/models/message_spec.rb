@@ -108,4 +108,16 @@ describe Message do
       end
     end
   end
+
+  it "should all_messages sorted by time" do
+    message1 = Message.new(:time => 3, :text => "foo")
+    message1.save_to_redis
+    message2 = Message.new(:time => 1, :text => "bar")
+    message2.save_to_redis
+    message3 = Message.new(:time => 5, :text => "dameleon")
+    message3.save_to_redis
+    expect_keys = [message2.key, message1.key, message3.key]
+
+    expect(Message.all_messages.map { |m| m.key }.select { |k| expect_keys.index(k)}).to eq(expect_keys)
+  end
 end
