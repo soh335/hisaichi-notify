@@ -2,6 +2,8 @@ class Message
   include ActiveModel::Model
   include ActiveModel::ForbiddenAttributesProtection
 
+  REDIS_KEY = "timer"
+
   attr_accessor :time, :text, :key
 
   validates :time, presence: true, numericality: { :greater_than => 0 }
@@ -29,13 +31,13 @@ class Message
   end
 
   def self.all_messages
-    $redis.hgetall("timer").map { |key, msgpack|
+    $redis.hgetall(REDIS_KEY).map { |key, msgpack|
       Message.new_from_key_and_msgpack(key, msgpack)
     }.sort { |a, b| a.time <=> b.time }
   end
 
   def self.delete(key)
-    $redis.hdel("timer", key)
+    $redis.hdel(REDIS_KEY, key)
   end
 
   def key
@@ -63,6 +65,6 @@ class Message
 
   def save_to_redis
     encoded = { :time => Time.now.to_i + time.to_i, :text => text }.to_msgpack
-    $redis.hset("timer", key, encoded)
+    $redis.hset(REDIS_KEY, key, encoded)
   end
 end

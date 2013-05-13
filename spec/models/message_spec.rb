@@ -45,7 +45,7 @@ describe Message do
     @message.text = "hoge"
     key = @message.key
     @message.save_to_redis
-    encoded = $redis.hget("timer", key)
+    encoded = $redis.hget(Message::REDIS_KEY, key)
     expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 10, "text" => "hoge"})
   end
 
@@ -64,10 +64,10 @@ describe Message do
         @message.text = "hoge"
         key = @message.key
         @message.add_timer_with_redis
-        encoded = $redis.hget("timer", key)
+        encoded = $redis.hget(Message::REDIS_KEY, key)
         expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 1, "text" => "hoge" })
         EM.add_timer(2) do
-          encoded = $redis.hget("timer", key)
+          encoded = $redis.hget(Message::REDIS_KEY, key)
           expect(encoded).to be_nil
           EM.stop
         end
@@ -82,7 +82,7 @@ describe Message do
         @message.text = "dameleon"
         key = @message.key
         @message.add_timer_with_redis
-        encoded = $redis.hget("timer", key)
+        encoded = $redis.hget(Message::REDIS_KEY, key)
         expect(MessagePack.unpack(encoded)).to eq({ "time" => Time.now.to_i + 1, "text" => "dameleon" })
 
         @message2 = Message.new
@@ -95,13 +95,13 @@ describe Message do
       sleep 2
 
       EM.run do
-        message2_hash = MessagePack.unpack($redis.hget("timer", @message2.key))
+        message2_hash = MessagePack.unpack($redis.hget(Message::REDIS_KEY, @message2.key))
 
         Message.restore
 
-        expect($redis.hget("timer", @message.key)).to be_nil
+        expect($redis.hget(Message::REDIS_KEY, @message.key)).to be_nil
 
-        decoded = MessagePack.unpack($redis.hget("timer", @message2.key))
+        decoded = MessagePack.unpack($redis.hget(Message::REDIS_KEY, @message2.key))
         expect(decoded["time"]).to be_within(Time.now.to_i+1).of(Time.now.to_i+2)
         expect(decoded["text"]).to eq("hisaichi")
         EM.stop
