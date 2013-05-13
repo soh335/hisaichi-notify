@@ -1,3 +1,6 @@
+<div>
+  <%= link_to "top", { controller: "message", action: "index" } %>
+</div>
 <% @messages.each do |m| -%>
   <div>
     <p>time: <%= m.time %></p>
