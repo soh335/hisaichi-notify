@@ -12,7 +12,7 @@ describe MessageController do
     expect(controller).to be_an_instance_of(MessageController)
   end
 
-  describe "post" do
+  describe "post and messages" do
     it "sould success to get /" do
       get 'index'
       expect(response).to be_success
@@ -30,6 +30,12 @@ describe MessageController do
       post 'post', { :message => { :time => -1, :text => "hoge" } }
       expect(response).to render_template("index")
       expect(assigns(:message).errors.size).to eq(1)
+    end
+
+    it "should show messages" do
+      get 'messages'
+      expect(response).to be_success
+      expect(assigns(:messages).size).to eq(1)
     end
   end
 end

@@ -15,6 +15,10 @@ class MessageController < ApplicationController
     end
   end
 
+  def messages
+    @messages = Message.all_messages
+  end
+
   private
 
   def post_params

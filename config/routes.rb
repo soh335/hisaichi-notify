@@ -2,6 +2,7 @@ HisaichiNotify::Application.routes.draw do
 
   root 'message#index'
   post 'post' => 'message#post'
+  get  'messages' => 'message#messages'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
