@@ -1,0 +1,11 @@
+bundler_args: --without development --path vendor/bundle
+script: "bundle exec rake spec"
+rvm:
+  - 1.9.3
+gemfile:
+  - Gemfile
+env:
+  global:
+    - secure: "ldKIIck49d4aytbkrBjX+9ajFIxN4TCk9nwSbL3sW/uiio/Rs5swjAdlHgnS\nTx5qySOZKU5xI4JtlUo2yWqHoQetcAFsS3eGRqk+WDvBC0OjzrL1ld9NAUar\nwD+HUo+IdSVa0bHMQoCm8dMKiCKzvjvcN4Jw/mhiFoNJodh7kQw="
+    - secure: "Ydhh6f74Dqald6yljhxaNW6OLz8Y8yFm+QViXr0yZ8jxwT8D5g1nLCF1vsdR\n9sdORSVTO+/KG7kD1jzVdBmYVQu7l40shKBHl0wDi0Z8cNn8tyCqMZVTcpH3\nJVQFFh12PoI8Ak1RY8lfY2hR046+N4IgeV72ZpncibcsTRqwTBc="
+    - secure: "nP6AY1N8BbIa9QZFhdlilNsOteeM4YSw4dksbBFTpjian1uTL426KeuHs4vR\npFcSumstmqpnjstODO0Ngh6G3hT70Fjb3wEwJArjyFZJ5ZVpRncKh1ff7dgC\ncAuoz9n5gLW+vx4iOYWabJcASvkqlXwWt7lpjixQv84au9mP/xw="
