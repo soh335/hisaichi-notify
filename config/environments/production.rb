@@ -52,6 +52,7 @@ HisaichiNotify::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
   # https://devcenter.heroku.com/articles/logging
   config.logger = Logger.new(STDOUT)
+  config.serve_static_assets = true
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
