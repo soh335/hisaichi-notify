@@ -1,8 +1,8 @@
 <div>
   <%= link_to "top", { controller: "message", action: "index" } %>
 </div>
+<ul>
 <% @messages.each do |m| -%>
-  <div>
-    <p>time: <%= m.time %></p>
-  </div>
+  <li><%= rest_time_message(m) %></li>
 <% end %>
+</ul>
