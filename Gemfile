@@ -52,6 +52,7 @@ gem 'eventmachine'
 gem 'em-http-request'
 gem 'thin'
 gem 'newrelic_rpm'
+gem 'rails_12factor'
 
 group :test do
   gem 'rspec-rails'
